@@ -1,0 +1,62 @@
+========================================
+如何为 EXE 添加自定义图标
+========================================
+
+【方法一：使用现有图标】
+
+1. 准备一个 .ico 文件（推荐 256x256 或 128x128）
+2. 将图标文件命名为 icon.ico
+3. 放在项目根目录
+4. 修改 build.spec 文件：
+   找到这一行：icon=None
+   改为：icon='icon.ico'
+5. 重新打包：双击 build.bat
+
+【方法二：从 PNG 转换为 ICO】
+
+如果你有 PNG 图片，可以：
+1. 访问在线转换网站：
+   - https://convertio.co/zh/png-ico/
+   - https://www.aconvert.com/cn/icon/png-to-ico/
+2. 上传 PNG 文件
+3. 选择尺寸（推荐 256x256）
+4. 下载转换后的 .ico 文件
+5. 按照方法一使用
+
+【方法三：使用 Python 生成】
+
+如果安装了 Pillow 库：
+```python
+from PIL import Image
+
+# 打开 PNG 图片
+img = Image.open('logo.png')
+
+# 调整大小
+img = img.resize((256, 256), Image.Resampling.LANCZOS)
+
+# 保存为 ICO
+img.save('icon.ico', format='ICO')
+```
+
+【推荐的图标尺寸】
+- 256x256（推荐）
+- 128x128
+- 64x64
+- 48x48
+- 32x32
+- 16x16
+
+【注意事项】
+- ICO 文件可以包含多个尺寸
+- Windows 会根据显示场景选择合适的尺寸
+- 如果没有图标，程序会使用默认的 Python 图标
+
+【免费图标资源】
+- https://www.flaticon.com/
+- https://icons8.com/
+- https://www.iconfinder.com/
+
+记得检查图标的使用许可！
+
+========================================
