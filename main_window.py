@@ -114,6 +114,25 @@ class MainWindow(ctk.CTk):
         )
         env_dropdown.pack(side="left")
         
+        # Authorization 输入
+        auth_frame = ctk.CTkFrame(config_frame)
+        auth_frame.pack(fill="x", padx=20, pady=10)
+        
+        auth_label = ctk.CTkLabel(
+            auth_frame,
+            text="Authorization:",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            width=100,
+            anchor="w"
+        )
+        auth_label.pack(side="left", padx=(0, 20))
+        
+        self.auth_entry = ctk.CTkEntry(
+            auth_frame,
+            placeholder_text="请输入 Authorization Token"
+        )
+        self.auth_entry.pack(side="left", fill="x", expand=True)
+        
         # 文件选择
         file_frame = ctk.CTkFrame(config_frame)
         file_frame.pack(fill="x", padx=20, pady=10)
@@ -226,7 +245,14 @@ class MainWindow(ctk.CTk):
     
     def _start_upload(self):
         """开始上传"""
-        # 验证
+        # 验证 Authorization
+        authorization = self.auth_entry.get().strip()
+        if not authorization:
+            self._log("错误: 请输入 Authorization", "error")
+            self.status_label.configure(text="错误: 未输入 Authorization", text_color="red")
+            return
+        
+        # 验证文件
         if not self.selected_file:
             self._log("错误: 请先选择文件", "error")
             self.status_label.configure(text="错误: 未选择文件", text_color="red")
@@ -253,6 +279,7 @@ class MainWindow(ctk.CTk):
         env = self.env_var.get()
         import_type = self.import_type_var.get()
         api_url = self.config_manager.get_api_url(env, import_type)
+        client_id = self.config_manager.get_client_id(env)
         
         if not api_url:
             self._log(f"错误: {env} 环境的 {import_type} API 未配置", "error")
@@ -266,20 +293,21 @@ class MainWindow(ctk.CTk):
         
         self._log(f"开始上传到 {env} 环境 ({import_type})")
         self._log(f"API URL: {api_url}")
+        self._log(f"CLIENT_ID: {client_id}")
         
         # 在后台线程执行上传
         thread = threading.Thread(
             target=self._upload_thread,
-            args=(self.selected_file, api_url),
+            args=(self.selected_file, api_url, authorization, client_id),
             daemon=True
         )
         thread.start()
     
-    def _upload_thread(self, file_path: str, api_url: str):
+    def _upload_thread(self, file_path: str, api_url: str, authorization: str, client_id: str):
         """上传线程"""
         try:
             # 调用 API
-            success, message = self.api_client.upload_file(file_path, api_url)
+            success, message = self.api_client.upload_file(file_path, api_url, authorization, client_id)
             
             # 更新 UI（线程安全）
             self.after(0, self._upload_complete, success, message)

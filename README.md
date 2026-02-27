@@ -55,12 +55,13 @@ pyinstaller build.spec
 ## 使用说明
 
 1. 首次运行会自动生成 `config.json` 配置文件
-2. 点击"环境配置"按钮配置各环境的 API 地址
-3. 选择导入类型（每日/每周/每月）
-4. 选择目标环境（dev/test/pre/prod）
-5. 点击"浏览"选择 Excel 文件（.xlsx 或 .xls）
-6. 点击"开始导入"执行上传
-7. 查看日志和 API 返回状态
+2. 点击"环境配置"按钮配置各环境的 API 地址和 CLIENT_ID
+3. 在主界面输入 Authorization Token
+4. 选择导入类型（每日/每周/每月）
+5. 选择目标环境（dev/test/pre/prod）
+6. 点击"浏览"选择 Excel 文件（.xlsx 或 .xls）
+7. 点击"开始导入"执行上传
+8. 查看日志和 API 返回状态
 
 ## 配置文件
 
@@ -69,9 +70,10 @@ pyinstaller build.spec
 ```json
 {
   "dev": {
-    "daily": "http://dev-api.example.com/import/daily",
-    "weekly": "http://dev-api.example.com/import/weekly",
-    "monthly": "http://dev-api.example.com/import/monthly"
+    "daily": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-daily",
+    "weekly": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
+    "monthly": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+    "client_id": "0"
   },
   "test": { ... },
   "pre": { ... },
@@ -86,6 +88,9 @@ API 需要满足以下规范：
 - 接受 POST 请求
 - 使用 multipart/form-data 格式
 - 文件字段名为 `file`
+- 请求头包含：
+  - `Authorization`: 用户认证 Token（界面输入）
+  - `CLIENT_ID`: 客户端 ID（配置文件中）
 - 返回 JSON 格式：
   ```json
   {
@@ -94,6 +99,15 @@ API 需要满足以下规范：
   }
   ```
 - code=0 表示成功，其他值表示失败
+
+### 请求示例
+
+```bash
+curl --location --request POST '/api/xingchen/fate-v2/import-fate-daily' \
+--header 'Authorization: 9e5311a6-f792-495a-a7ae-66dfb03d6e4c-1896488519313035264' \
+--header 'CLIENT_ID: 0' \
+--form 'file=@"your-file.xlsx"'
+```
 
 ## 开发
 

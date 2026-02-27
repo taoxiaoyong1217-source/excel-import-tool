@@ -3,7 +3,7 @@ API 客户端模块
 负责文件上传和 API 请求
 """
 import requests
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 import os
 
 
@@ -13,13 +13,15 @@ class APIClient:
     def __init__(self, timeout: int = 60):
         self.timeout = timeout
     
-    def upload_file(self, file_path: str, api_url: str) -> Tuple[bool, str]:
+    def upload_file(self, file_path: str, api_url: str, authorization: str = "", client_id: str = "0") -> Tuple[bool, str]:
         """
         上传文件到 API
         
         Args:
             file_path: Excel 文件路径
             api_url: API URL
+            authorization: Authorization 请求头
+            client_id: CLIENT_ID 请求头
             
         Returns:
             (是否成功, 消息)
@@ -30,7 +32,16 @@ class APIClient:
         if not api_url:
             return False, "API URL 未配置"
         
+        if not authorization:
+            return False, "Authorization 未填写"
+        
         try:
+            # 构建请求头
+            headers = {
+                'Authorization': authorization,
+                'CLIENT_ID': client_id
+            }
+            
             # 打开文件
             with open(file_path, 'rb') as f:
                 files = {'file': (os.path.basename(file_path), f, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')}
@@ -38,6 +49,7 @@ class APIClient:
                 # 发送 POST 请求
                 response = requests.post(
                     api_url,
+                    headers=headers,
                     files=files,
                     timeout=self.timeout
                 )

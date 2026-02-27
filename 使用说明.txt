@@ -16,14 +16,16 @@ Excel 运势数据导入工具 - 使用说明
 
 【日常使用】
 1. 双击运行 Excel导入工具.exe
-2. 选择导入类型（每日/每周/每月运势）
-3. 选择目标环境（dev/test/pre/prod）
-4. 点击"浏览"选择 Excel 文件
-5. 点击"开始导入"
-6. 查看日志和返回状态
+2. 输入 Authorization Token
+3. 选择导入类型（每日/每周/每月运势）
+4. 选择目标环境（dev/test/pre/prod）
+5. 点击"浏览"选择 Excel 文件
+6. 点击"开始导入"
+7. 查看日志和返回状态
 
 【配置说明】
-- config.json 文件保存了所有环境的 API 地址
+- config.json 文件保存了所有环境的 API 地址和 CLIENT_ID
+- Authorization Token 需要在主界面每次输入
 - 可以直接编辑 config.json 文件
 - 也可以通过"环境配置"按钮在界面中修改
 - 修改后立即生效
@@ -42,6 +44,21 @@ Excel 运势数据导入工具 - 使用说明
 - code=0 表示成功
 - 其他值表示失败
 - msg 字段会显示在界面上
+
+【请求格式】
+- 方法：POST
+- Content-Type: multipart/form-data
+- 请求头：
+  • Authorization: 用户认证 Token（界面输入）
+  • CLIENT_ID: 客户端 ID（配置文件中）
+- 请求体：
+  • file: Excel 文件
+
+示例：
+curl --location --request POST '/api/xingchen/fate-v2/import-fate-daily' \
+--header 'Authorization: your-token-here' \
+--header 'CLIENT_ID: 0' \
+--form 'file=@"your-file.xlsx"'
 
 【常见问题】
 

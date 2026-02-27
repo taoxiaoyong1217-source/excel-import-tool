@@ -31,24 +31,28 @@ class ConfigManager:
         """创建默认配置文件"""
         default_config = {
             "dev": {
-                "daily": "http://dev-api.example.com/import/daily",
-                "weekly": "http://dev-api.example.com/import/weekly",
-                "monthly": "http://dev-api.example.com/import/monthly"
+                "daily": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "client_id": "0"
             },
             "test": {
-                "daily": "http://test-api.example.com/import/daily",
-                "weekly": "http://test-api.example.com/import/weekly",
-                "monthly": "http://test-api.example.com/import/monthly"
+                "daily": "http://test-api.example.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://test-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://test-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "client_id": "0"
             },
             "pre": {
-                "daily": "http://pre-api.example.com/import/daily",
-                "weekly": "http://pre-api.example.com/import/weekly",
-                "monthly": "http://pre-api.example.com/import/monthly"
+                "daily": "http://pre-api.example.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://pre-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://pre-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "client_id": "0"
             },
             "prod": {
-                "daily": "http://prod-api.example.com/import/daily",
-                "weekly": "http://prod-api.example.com/import/weekly",
-                "monthly": "http://prod-api.example.com/import/monthly"
+                "daily": "http://prod-api.example.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://prod-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://prod-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "client_id": "0"
             }
         }
         
@@ -61,6 +65,13 @@ class ConfigManager:
             return self.config_data.get(env, {}).get(import_type, "")
         except Exception:
             return ""
+    
+    def get_client_id(self, env: str) -> str:
+        """获取 CLIENT_ID"""
+        try:
+            return self.config_data.get(env, {}).get("client_id", "0")
+        except Exception:
+            return "0"
     
     def get_all_config(self) -> Dict:
         """获取所有配置"""

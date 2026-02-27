@@ -56,7 +56,8 @@ class ConfigWindow(ctk.CTkToplevel):
         import_types = [
             ("daily", "每日运势 API"),
             ("weekly", "每周运势 API"),
-            ("monthly", "每月运势 API")
+            ("monthly", "每月运势 API"),
+            ("client_id", "CLIENT_ID")
         ]
         
         for env in environments:
@@ -71,7 +72,7 @@ class ConfigWindow(ctk.CTkToplevel):
             )
             env_label.pack(anchor="w", padx=10, pady=(10, 5))
             
-            # 三个 API 输入框
+            # API 输入框
             for type_key, type_label in import_types:
                 input_frame = ctk.CTkFrame(env_frame)
                 input_frame.pack(fill="x", padx=10, pady=5)
@@ -84,7 +85,12 @@ class ConfigWindow(ctk.CTkToplevel):
                 )
                 label.pack(side="left", padx=(5, 10))
                 
-                entry = ctk.CTkEntry(input_frame, width=450)
+                # CLIENT_ID 使用较短的输入框
+                if type_key == "client_id":
+                    entry = ctk.CTkEntry(input_frame, width=200)
+                else:
+                    entry = ctk.CTkEntry(input_frame, width=450)
+                
                 entry.pack(side="left", fill="x", expand=True, padx=(0, 5))
                 
                 # 保存引用
@@ -123,11 +129,11 @@ class ConfigWindow(ctk.CTkToplevel):
         config = self.config_manager.get_all_config()
         
         for env in ["dev", "test", "pre", "prod"]:
-            for type_key in ["daily", "weekly", "monthly"]:
+            for type_key in ["daily", "weekly", "monthly", "client_id"]:
                 key = f"{env}_{type_key}"
                 if key in self.entries:
-                    url = config.get(env, {}).get(type_key, "")
-                    self.entries[key].insert(0, url)
+                    value = config.get(env, {}).get(type_key, "")
+                    self.entries[key].insert(0, value)
     
     def _save_config(self):
         """保存配置"""
@@ -141,17 +147,18 @@ class ConfigWindow(ctk.CTkToplevel):
         
         # 验证并收集数据
         for env in ["dev", "test", "pre", "prod"]:
-            for type_key in ["daily", "weekly", "monthly"]:
+            for type_key in ["daily", "weekly", "monthly", "client_id"]:
                 key = f"{env}_{type_key}"
                 if key in self.entries:
-                    url = self.entries[key].get().strip()
+                    value = self.entries[key].get().strip()
                     
-                    # 验证 URL 不为空
-                    if not url:
-                        self._show_error(f"{env.upper()} 环境的 {type_key} API URL 不能为空")
+                    # 验证不为空
+                    if not value:
+                        field_name = "CLIENT_ID" if type_key == "client_id" else f"{type_key} API URL"
+                        self._show_error(f"{env.upper()} 环境的 {field_name} 不能为空")
                         return
                     
-                    new_config[env][type_key] = url
+                    new_config[env][type_key] = value
         
         # 保存到文件
         if self.config_manager.save_config(new_config):
