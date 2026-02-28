@@ -18,7 +18,7 @@ class MainWindow(ctk.CTk):
         
         # 窗口设置
         self.title("Excel 导入工具")
-        self.geometry("900x700")
+        self.geometry("900x800")
         self.resizable(False, False)
         
         # 设置深色模式
@@ -200,7 +200,7 @@ class MainWindow(ctk.CTk):
         
         self.log_text = ctk.CTkTextbox(
             log_frame,
-            height=200,
+            height=150,
             font=ctk.CTkFont(size=12)
         )
         self.log_text.pack(fill="both", expand=True, padx=10, pady=(0, 10))
@@ -218,7 +218,7 @@ class MainWindow(ctk.CTk):
         
         self.status_text = ctk.CTkTextbox(
             status_frame,
-            height=150,
+            height=250,
             font=ctk.CTkFont(size=11)
         )
         self.status_text.pack(fill="both", expand=True, padx=10, pady=(0, 10))
