@@ -1,0 +1,72 @@
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║              默认配置说明                                  ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+默认 API 地址
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+【开发环境 (dev)】
+域名：gateway-dev.baitaoxingqiu.com
+协议：HTTP
+
+• 每日运势：/api/xingchen/fate-v2/import-fate-daily
+• 每周运势：/api/xingchen/fate-v2/import-fate-weekly
+• 每月运势：/api/xingchen/fate-v2/import-fate-monthly
+
+【测试环境 (test)】
+域名：gateway-test.baitaoxingqiu.com
+协议：HTTP
+
+• 每日运势：/api/xingchen/fate-v2/import-fate-daily
+• 每周运势：/api/xingchen/fate-v2/import-fate-weekly
+• 每月运势：/api/xingchen/fate-v2/import-fate-monthly
+
+【预发布环境 (pre)】
+域名：gateway-pre.baitaoxingqiu.com
+协议：HTTP
+
+• 每日运势：/api/xingchen/fate-v2/import-fate-daily
+• 每周运势：/api/xingchen/fate-v2/import-fate-weekly
+• 每月运势：/api/xingchen/fate-v2/import-fate-monthly
+
+【生产环境 (prod)】
+域名：gateway.baitaoxingqiu.com
+协议：HTTPS ⚠️
+
+• 每日运势：/api/xingchen/fate-v2/import-fate-daily
+• 每周运势：/api/xingchen/fate-v2/import-fate-weekly
+• 每月运势：/api/xingchen/fate-v2/import-fate-monthly
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+注意事项
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 生产环境使用 HTTPS，其他环境使用 HTTP
+2. 所有环境的 CLIENT_ID 默认为 "0"
+3. 首次运行程序会自动生成配置文件
+4. 可以通过"环境配置"按钮修改
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+修改配置
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+【方式 1】通过界面修改
+1. 点击"环境配置"按钮
+2. 修改对应环境的 API 地址
+3. 点击"保存配置"
+
+【方式 2】直接编辑文件
+1. 打开 config.json 文件
+2. 修改对应的 URL
+3. 保存文件
+4. 重启程序
+
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║  配置已更新为实际的 API 地址                               ║
+║  首次运行会自动生成，无需手动配置                         ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝

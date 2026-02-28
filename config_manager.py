@@ -31,27 +31,27 @@ class ConfigManager:
         """创建默认配置文件"""
         default_config = {
             "dev": {
-                "daily": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-daily",
-                "weekly": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
-                "monthly": "http://dev-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "daily": "http://gateway-dev.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://gateway-dev.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://gateway-dev.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-monthly",
                 "client_id": "0"
             },
             "test": {
-                "daily": "http://test-api.example.com/api/xingchen/fate-v2/import-fate-daily",
-                "weekly": "http://test-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
-                "monthly": "http://test-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "daily": "http://gateway-test.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://gateway-test.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://gateway-test.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-monthly",
                 "client_id": "0"
             },
             "pre": {
-                "daily": "http://pre-api.example.com/api/xingchen/fate-v2/import-fate-daily",
-                "weekly": "http://pre-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
-                "monthly": "http://pre-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "daily": "http://gateway-pre.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "http://gateway-pre.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "http://gateway-pre.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-monthly",
                 "client_id": "0"
             },
             "prod": {
-                "daily": "http://prod-api.example.com/api/xingchen/fate-v2/import-fate-daily",
-                "weekly": "http://prod-api.example.com/api/xingchen/fate-v2/import-fate-weekly",
-                "monthly": "http://prod-api.example.com/api/xingchen/fate-v2/import-fate-monthly",
+                "daily": "https://gateway.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-daily",
+                "weekly": "https://gateway.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-weekly",
+                "monthly": "https://gateway.baitaoxingqiu.com/api/xingchen/fate-v2/import-fate-monthly",
                 "client_id": "0"
             }
         }
