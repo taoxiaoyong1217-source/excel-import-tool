@@ -13,7 +13,7 @@ class APIClient:
     def __init__(self, timeout: int = 60):
         self.timeout = timeout
     
-    def upload_file(self, file_path: str, api_url: str, authorization: str = "", client_id: str = "0") -> Tuple[bool, str]:
+    def upload_file(self, file_path: str, api_url: str, authorization: str = "", client_id: str = "0") -> Tuple[bool, str, str]:
         """
         上传文件到 API
         
@@ -24,16 +24,16 @@ class APIClient:
             client_id: CLIENT_ID 请求头
             
         Returns:
-            (是否成功, 消息)
+            (是否成功, 消息, 原始JSON)
         """
         if not os.path.exists(file_path):
-            return False, "文件不存在"
+            return False, "文件不存在", ""
         
         if not api_url:
-            return False, "API URL 未配置"
+            return False, "API URL 未配置", ""
         
         if not authorization:
-            return False, "Authorization 未填写"
+            return False, "Authorization 未填写", ""
         
         try:
             # 构建请求头
@@ -58,15 +58,15 @@ class APIClient:
                 return self._parse_response(response)
                 
         except requests.exceptions.Timeout:
-            return False, "请求超时，请检查网络连接"
+            return False, "请求超时，请检查网络连接", ""
         except requests.exceptions.ConnectionError:
-            return False, "网络连接失败，请检查网络或 API 地址"
+            return False, "网络连接失败，请检查网络或 API 地址", ""
         except requests.exceptions.RequestException as e:
-            return False, f"请求异常: {str(e)}"
+            return False, f"请求异常: {str(e)}", ""
         except Exception as e:
-            return False, f"未知错误: {str(e)}"
+            return False, f"未知错误: {str(e)}", ""
     
-    def _parse_response(self, response: requests.Response) -> Tuple[bool, str]:
+    def _parse_response(self, response: requests.Response) -> Tuple[bool, str, str]:
         """
         解析 API 响应
         
@@ -74,9 +74,12 @@ class APIClient:
             response: requests 响应对象
             
         Returns:
-            (是否成功, 消息)
+            (是否成功, 消息, 原始JSON)
         """
         try:
+            # 获取原始响应文本
+            raw_json = response.text
+            
             # 尝试解析 JSON
             data = response.json()
             
@@ -85,12 +88,13 @@ class APIClient:
             msg = data.get('msg', '未知响应')
             
             if code == 0:
-                return True, msg
+                return True, msg, raw_json
             else:
-                return False, f"API 返回错误 (code={code}): {msg}"
+                return False, f"API 返回错误 (code={code}): {msg}", raw_json
                 
         except ValueError:
             # JSON 解析失败
-            return False, f"API 返回格式错误，HTTP 状态码: {response.status_code}"
+            raw_text = response.text[:500] if len(response.text) > 500 else response.text
+            return False, f"API 返回格式错误，HTTP 状态码: {response.status_code}", raw_text
         except Exception as e:
-            return False, f"解析响应失败: {str(e)}"
+            return False, f"解析响应失败: {str(e)}", str(e)

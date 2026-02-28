@@ -207,7 +207,7 @@ class MainWindow(ctk.CTk):
         
         # API 返回状态区域
         status_frame = ctk.CTkFrame(main_frame)
-        status_frame.pack(fill="x", pady=(10, 0))
+        status_frame.pack(fill="both", expand=True, pady=(10, 0))
         
         status_title = ctk.CTkLabel(
             status_frame,
@@ -216,14 +216,14 @@ class MainWindow(ctk.CTk):
         )
         status_title.pack(anchor="w", padx=10, pady=(10, 5))
         
-        self.status_label = ctk.CTkLabel(
+        self.status_text = ctk.CTkTextbox(
             status_frame,
-            text="等待操作...",
-            font=ctk.CTkFont(size=12),
-            anchor="w",
-            justify="left"
+            height=150,
+            font=ctk.CTkFont(size=11)
         )
-        self.status_label.pack(fill="x", padx=10, pady=(0, 10))
+        self.status_text.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        self.status_text.insert("1.0", "等待操作...")
+        self.status_text.configure(state="disabled")
     
     def _select_file(self):
         """选择文件"""
@@ -249,25 +249,25 @@ class MainWindow(ctk.CTk):
         authorization = self.auth_entry.get().strip()
         if not authorization:
             self._log("错误: 请输入 Authorization", "error")
-            self.status_label.configure(text="错误: 未输入 Authorization", text_color="red")
+            self._update_status("错误: 未输入 Authorization")
             return
         
         # 验证文件
         if not self.selected_file:
             self._log("错误: 请先选择文件", "error")
-            self.status_label.configure(text="错误: 未选择文件", text_color="red")
+            self._update_status("错误: 未选择文件")
             return
         
         # 检查文件类型
         if not self.selected_file.lower().endswith(('.xlsx', '.xls')):
             self._log("错误: 文件类型必须是 .xlsx 或 .xls", "error")
-            self.status_label.configure(text="错误: 文件类型不正确", text_color="red")
+            self._update_status("错误: 文件类型不正确")
             return
         
         # 检查文件是否存在
         if not os.path.exists(self.selected_file):
             self._log("错误: 文件不存在", "error")
-            self.status_label.configure(text="错误: 文件不存在", text_color="red")
+            self._update_status("错误: 文件不存在")
             return
         
         # 防止重复点击
@@ -283,13 +283,13 @@ class MainWindow(ctk.CTk):
         
         if not api_url:
             self._log(f"错误: {env} 环境的 {import_type} API 未配置", "error")
-            self.status_label.configure(text="错误: API 未配置", text_color="red")
+            self._update_status("错误: API 未配置")
             return
         
         # 开始上传
         self.is_uploading = True
         self.start_button.configure(state="disabled", text="上传中...")
-        self.status_label.configure(text="正在上传...", text_color="yellow")
+        self._update_status("正在上传，请稍候...")
         
         self._log(f"开始上传到 {env} 环境 ({import_type})")
         self._log(f"API URL: {api_url}")
@@ -307,31 +307,49 @@ class MainWindow(ctk.CTk):
         """上传线程"""
         try:
             # 调用 API
-            success, message = self.api_client.upload_file(file_path, api_url, authorization, client_id)
+            success, message, raw_json = self.api_client.upload_file(file_path, api_url, authorization, client_id)
             
             # 更新 UI（线程安全）
-            self.after(0, self._upload_complete, success, message)
+            self.after(0, self._upload_complete, success, message, raw_json)
             
         except Exception as e:
-            self.after(0, self._upload_complete, False, f"上传异常: {str(e)}")
+            self.after(0, self._upload_complete, False, f"上传异常: {str(e)}", "")
     
-    def _upload_complete(self, success: bool, message: str):
+    def _upload_complete(self, success: bool, message: str, raw_json: str):
         """上传完成回调"""
         self.is_uploading = False
         self.start_button.configure(state="normal", text="开始导入")
         
+        # 更新状态文本框
+        self.status_text.configure(state="normal")
+        self.status_text.delete("1.0", "end")
+        
         if success:
-            self._log(f"成功: {message}", "success")
-            self.status_label.configure(
-                text=f"✓ 导入成功: {message}",
-                text_color="green"
-            )
+            self._log(f"✓ 导入成功", "success")
+            
+            # 格式化显示
+            status_content = "✓ 导入成功\n\n"
+            status_content += "=" * 50 + "\n"
+            status_content += "API 原始返回：\n"
+            status_content += "=" * 50 + "\n"
+            status_content += raw_json
+            
+            self.status_text.insert("1.0", status_content)
+            # customtkinter 的 textbox 不支持单独设置颜色，但可以通过 tag 实现
         else:
-            self._log(f"失败: {message}", "error")
-            self.status_label.configure(
-                text=f"✗ 导入失败: {message}",
-                text_color="red"
-            )
+            self._log(f"✗ 导入失败: {message}", "error")
+            
+            # 格式化显示
+            status_content = f"✗ 导入失败\n\n错误信息：{message}\n\n"
+            if raw_json:
+                status_content += "=" * 50 + "\n"
+                status_content += "API 原始返回：\n"
+                status_content += "=" * 50 + "\n"
+                status_content += raw_json
+            
+            self.status_text.insert("1.0", status_content)
+        
+        self.status_text.configure(state="disabled")
     
     def _open_config_window(self):
         """打开环境配置窗口"""
@@ -341,6 +359,13 @@ class MainWindow(ctk.CTk):
         """配置保存后的回调"""
         self.config_manager.reload_config()
         self._log("配置已更新", "success")
+    
+    def _update_status(self, message: str):
+        """更新状态显示"""
+        self.status_text.configure(state="normal")
+        self.status_text.delete("1.0", "end")
+        self.status_text.insert("1.0", message)
+        self.status_text.configure(state="disabled")
     
     def _log(self, message: str, level: str = "info"):
         """添加日志"""
